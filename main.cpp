@@ -268,3 +268,124 @@ int main() {
 
     return 0;
 }
+
+/*OUTPUT
+aidentsang@Aidens-MacBook-Pro CS216_L2_AT % "/Users/aidentsang/Pierce college Labs C++/CS216_L2_AT/build/main"
+
+===== Creature Battle Menu =====
+1. Battle
+2. Quit
+Enter your choice: 2
+
+Are you sure you want to quit? (y/n): n
+
+===== Creature Battle Menu =====
+1. Battle
+2. Quit
+Enter your choice: 1
+
+Enter the name of the first creature: Raquayza
+Enter the name of the second creature: Digimon
+
+--- Creatures Before Battle ---
+Name                    Strength      Health
+Raquayza                     155         145
+Digimon                       91          73
+
+Raquayza attacks first!
+
+--- Battle Log ---
+Round Attacker                  Damage  Defender             Defender Health
+1     Raquayza                      94  Digimon                            0
+
+--- Creatures After Battle ---
+Name                    Strength      Health
+Raquayza                     155         145
+Digimon                       91           0
+
+Raquayza defeated Digimon in 1 rounds.
+
+===== Creature Battle Menu =====
+1. Battle
+2. Quit
+Enter your choice: 1
+
+Enter the name of the first creature: 1324
+Enter the name of the second creature: /fdsa
+
+--- Creatures Before Battle ---
+Name                    Strength      Health
+1324                         176         143
+/fdsa                        141          95
+
+1324 attacks first!
+
+--- Battle Log ---
+Round Attacker                  Damage  Defender             Defender Health
+1     1324                          50  /fdsa                             45
+2     /fdsa                        105  1324                              38
+3     1324                          99  /fdsa                              0
+
+--- Creatures After Battle ---
+Name                    Strength      Health
+1324                         176          38
+/fdsa                        141           0
+
+1324 defeated /fdsa in 3 rounds.
+
+===== Creature Battle Menu =====
+1. Battle
+2. Quit
+Enter your choice: 3
+Invalid choice. Please enter 1 or 2: `
+Invalid choice. Please enter 1 or 2: 0
+Invalid choice. Please enter 1 or 2: d
+Invalid choice. Please enter 1 or 2: fsa
+Invalid choice. Please enter 1 or 2: 2
+
+Are you sure you want to quit? (y/n): 3
+Invalid input. Please enter 'y' or 'n'.
+
+Are you sure you want to quit? (y/n): 4
+Invalid input. Please enter 'y' or 'n'.
+
+Are you sure you want to quit? (y/n): 2
+Invalid input. Please enter 'y' or 'n'.
+
+Are you sure you want to quit? (y/n): n
+
+===== Creature Battle Menu =====
+1. Battle
+2. Quit
+Enter your choice: 1
+
+Enter the name of the first creature: Aiden
+Enter the name of the second creature: Daniel
+
+--- Creatures Before Battle ---
+Name                    Strength      Health
+Aiden                        188         145
+Daniel                       104         156
+
+Daniel attacks first!
+
+--- Battle Log ---
+Round Attacker                  Damage  Defender             Defender Health
+1     Daniel                        80  Aiden                             65
+2     Aiden                        163  Daniel                             0
+
+--- Creatures After Battle ---
+Name                    Strength      Health
+Aiden                        188          65
+Daniel                       104           0
+
+Aiden defeated Daniel in 2 rounds.
+
+===== Creature Battle Menu =====
+1. Battle
+2. Quit
+Enter your choice: 2
+
+Are you sure you want to quit? (y/n): y
+Goodbye!
+aidentsang@Aidens-MacBook-Pro CS216_L2_AT % */
