@@ -12,19 +12,14 @@
 
 using namespace std;
 
-// ----- global constants -----
 const int NAME_COL = 20;
 const int NUM_COL = 12;
 
 const int MIN_STAT = 60;
 const int MAX_STAT = 200;
 
-// menu choices
 enum MenuOption { BATTLE = 1, QUIT = 2 };
 
-// =========================================================
-// Creature class - manages one creature
-// =========================================================
 class Creature {
 private:
     string name;
@@ -56,12 +51,9 @@ Creature::Creature(const string& creatureName, int creatureStrength, int creatur
     setCreature(creatureName, creatureStrength, creatureHealth);
 }
 
-// single place that actually stores the member variables;
-// every other setter/constructor routes through here
 void Creature::setCreature(const string& creatureName, int creatureStrength, int creatureHealth) {
     name = creatureName;
     strength = creatureStrength;
-    // health can never be negative; floor it at 0
     health = (creatureHealth < 0) ? 0 : creatureHealth;
 }
 
@@ -89,7 +81,6 @@ int Creature::getHealth() const {
     return health;
 }
 
-// damage inflicted is a random number up to the creature's strength
 int Creature::getDamage() const {
     return (rand() % strength) + 1;
 }
@@ -102,11 +93,6 @@ string Creature::toString() const {
     return ss.str();
 }
 
-// =========================================================
-// free helper functions
-// =========================================================
-
-// prints the Name/Strength/Health table for both creatures
 void printCreatureTable(const Creature& a, const Creature& b, const string& title) {
     cout << "\n" << title << "\n";
     cout << left << setw(NAME_COL) << "Name"
@@ -132,8 +118,6 @@ void printRoundRow(int round, const Creature& attacker, int damage, const Creatu
          << right << setw(NUM_COL + 4) << defender.getHealth() << "\n";
 }
 
-// one creature attacks another; health cannot drop below 0.
-// same function is reused for both directions by swapping the arguments.
 int attackRound(const Creature& attacker, Creature& defender) {
     int damage = attacker.getDamage();
     int newHealth = defender.getHealth() - damage;
@@ -161,7 +145,6 @@ void runBattle() {
 
     printCreatureTable(creatureA, creatureB, "--- Creatures Before Battle ---");
 
-    // randomly select who attacks first
     bool aAttacksFirst = (rand() % 2 == 0);
 
     cout << "\n" << (aAttacksFirst ? creatureA.getName() : creatureB.getName())
@@ -202,8 +185,6 @@ void printMenu() {
     cout << "Enter your choice: ";
 }
 
-// reads the menu choice, reprompting in place (no menu reprint / message
-// spam) until a valid integer choice (BATTLE or QUIT) is entered
 int readMenuChoice() {
     int choice;
     while (true) {
@@ -226,7 +207,6 @@ int readMenuChoice() {
     }
 }
 
-// asks the user to confirm quitting; returns true only on 'y'
 bool confirmQuit() {
     char answer;
     do {
