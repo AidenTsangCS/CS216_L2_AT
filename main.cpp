@@ -2,15 +2,14 @@
 // Lab #2
 
 #include <iostream>
-#include <iomanip>
-#include <sstream>
+#include <iomanip> 
 #include <string>
+#include <sstream>
 #include <cstdlib>
-#include <ctime>
-#include <cctype>
 #include <limits>
 
 using namespace std;
+
 
 const int NAME_COL = 20;
 const int NUM_COL = 12;
@@ -18,13 +17,21 @@ const int NUM_COL = 12;
 const int MIN_STAT = 60;
 const int MAX_STAT = 200;
 
+const string DEFAULT_NAME = "Unknown";
+const int DEFAULT_STRENGTH = 0;
+const int DEFAULT_HEALTH = 0;
+
+
+const unsigned int RANDOM_SEED = 216;
+
 enum MenuOption { BATTLE = 1, QUIT = 2 };
+
 
 class Creature {
 private:
-    string name;
-    int strength;   // maximum damage a creature can inflict
-    int health;     // hit points; cannot go below 0
+    string name = DEFAULT_NAME;       // creature's name
+    int strength = DEFAULT_STRENGTH;  // maximum damage a creature can inflict
+    int health = DEFAULT_HEALTH;      // hit points; cannot go below 0
 
 public:
     Creature();
@@ -43,8 +50,46 @@ public:
     string toString() const;
 };
 
+
+void printCreatureTable(const Creature& a, const Creature& b, const string& title);
+void printRoundHeader();
+void printRoundRow(int round, const Creature& attacker, int damage, const Creature& defender);
+int attackRound(const Creature& attacker, Creature& defender);
+void runBattle();
+void printMenu();
+int readMenuChoice();
+bool confirmQuit();
+
+
+int main() {
+    srand(RANDOM_SEED);
+
+    int choice = 0;
+    bool running = true;
+
+    while (running) {
+        printMenu();
+        choice = readMenuChoice();
+
+        switch (choice) {
+            case BATTLE:
+                runBattle();
+                break;
+            case QUIT:
+                if (confirmQuit()) {
+                    cout << "Goodbye!\n";
+                    running = false;
+                }
+                break;
+        }
+    }
+
+    return 0;
+}
+
+
 Creature::Creature() {
-    setCreature("", 0, 0);
+    setCreature(DEFAULT_NAME, DEFAULT_STRENGTH, DEFAULT_HEALTH);
 }
 
 Creature::Creature(const string& creatureName, int creatureStrength, int creatureHealth) {
@@ -92,6 +137,7 @@ string Creature::toString() const {
        << setw(NUM_COL) << health;
     return ss.str();
 }
+
 
 void printCreatureTable(const Creature& a, const Creature& b, const string& title) {
     cout << "\n" << title << "\n";
@@ -158,7 +204,7 @@ void runBattle() {
 
     while (creatureA.getHealth() > 0 && creatureB.getHealth() > 0) {
         round++;
-        int damage;
+        int damage = 0;
         if (attackerIsA) {
             damage = attackRound(creatureA, creatureB);
             printRoundRow(round, creatureA, damage, creatureB);
@@ -186,180 +232,124 @@ void printMenu() {
 }
 
 int readMenuChoice() {
-    int choice;
-    while (true) {
+    int choice = 0;
+    bool valid = false;
+
+    while (!valid) {
         cin >> choice;
 
         if (cin.fail()) {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            choice = 0;
             cout << "Invalid choice. Please enter " << BATTLE << " or " << QUIT << ": ";
-            continue;
-        }
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        } else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-        if (choice != BATTLE && choice != QUIT) {
-            cout << "Invalid choice. Please enter " << BATTLE << " or " << QUIT << ": ";
-            continue;
+            if (choice == BATTLE || choice == QUIT) {
+                valid = true;
+            } else {
+                cout << "Invalid choice. Please enter " << BATTLE << " or " << QUIT << ": ";
+            }
         }
-
-        return choice;
     }
+
+    return choice;
 }
 
 bool confirmQuit() {
-    char answer;
-    do {
+    char answer = ' ';
+
+    while (answer != 'y' && answer != 'n') {
         cout << "\nAre you sure you want to quit? (y/n): ";
         cin >> answer;
-        cin.ignore();
-        answer = static_cast<char>(tolower(answer));
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        // Convert uppercase to lowercase without <cctype>
+        if (answer >= 'A' && answer <= 'Z') {
+            answer = static_cast<char>(answer - 'A' + 'a');
+        }
 
         if (answer != 'y' && answer != 'n') {
             cout << "Invalid input. Please enter 'y' or 'n'.\n";
         }
-    } while (answer != 'y' && answer != 'n');
+    }
 
     return answer == 'y';
 }
 
-int main() {
-    srand(static_cast<unsigned int>(time(0)));
-
-    int choice = 0;
-    bool running = true;
-
-    while (running) {
-        printMenu();
-        choice = readMenuChoice();
-
-        switch (choice) {
-            case BATTLE:
-                runBattle();
-                break;
-            case QUIT:
-                if (confirmQuit()) {
-                    cout << "Goodbye!\n";
-                    running = false;
-                }
-                break;
-        }
-    }
-
-    return 0;
-}
-
-/*OUTPUT
+/* Output
 aidentsang@Aidens-MacBook-Pro CS216_L2_AT % "/Users/aidentsang/Pierce college Labs C++/CS216_L2_AT/build/main"
+
+===== Creature Battle Menu =====
+1. Battle
+2. Quit
+Enter your choice: 1
+
+Enter the name of the first creature:   Jo the elf
+Enter the name of the second creature: Lee the  demon
+
+--- Creatures Before Battle ---
+Name                    Strength      Health
+        Jo the elf                  186         161
+Lee the  demon               131          63
+
+Lee the  demon attacks first!
+
+--- Battle Log ---
+Round Attacker                  Damage  Defender             Defender Health
+1     Lee the  demon               108          Jo the elf                       53
+2       Jo the elf                   21  Lee the  demon                    42
+3     Lee the  demon                95          Jo the elf                        0
+
+--- Creatures After Battle ---
+Name                    Strength      Health
+        Jo the elf                  186           0
+Lee the  demon               131          42
+
+Lee the  demon defeated         Jo the elf in 3 rounds.
+
+===== Creature Battle Menu =====
+1. Battle
+2. Quit
+Enter your choice: 3
+Invalid choice. Please enter 1 or 2: aiden
+Invalid choice. Please enter 1 or 2: 1
+
+Enter the name of the first creature: !2
+Enter the name of the second creature: #fda-
+
+--- Creatures Before Battle ---
+Name                    Strength      Health
+!2                           109         192
+#fda-                        134         152
+
+#fda- attacks first!
+
+--- Battle Log ---
+Round Attacker                  Damage  Defender             Defender Health
+1     #fda-                         98  !2                                94
+2     !2                            28  #fda-                            124
+3     #fda-                         49  !2                                45
+4     !2                            55  #fda-                             69
+5     #fda-                        110  !2                                 0
+
+--- Creatures After Battle ---
+Name                    Strength      Health
+!2                           109           0
+#fda-                        134          69
+
+#fda- defeated !2 in 5 rounds.
 
 ===== Creature Battle Menu =====
 1. Battle
 2. Quit
 Enter your choice: 2
 
-Are you sure you want to quit? (y/n): n
-
-===== Creature Battle Menu =====
-1. Battle
-2. Quit
-Enter your choice: 1
-
-Enter the name of the first creature: Raquayza
-Enter the name of the second creature: Digimon
-
---- Creatures Before Battle ---
-Name                    Strength      Health
-Raquayza                     155         145
-Digimon                       91          73
-
-Raquayza attacks first!
-
---- Battle Log ---
-Round Attacker                  Damage  Defender             Defender Health
-1     Raquayza                      94  Digimon                            0
-
---- Creatures After Battle ---
-Name                    Strength      Health
-Raquayza                     155         145
-Digimon                       91           0
-
-Raquayza defeated Digimon in 1 rounds.
-
-===== Creature Battle Menu =====
-1. Battle
-2. Quit
-Enter your choice: 1
-
-Enter the name of the first creature: 1324
-Enter the name of the second creature: /fdsa
-
---- Creatures Before Battle ---
-Name                    Strength      Health
-1324                         176         143
-/fdsa                        141          95
-
-1324 attacks first!
-
---- Battle Log ---
-Round Attacker                  Damage  Defender             Defender Health
-1     1324                          50  /fdsa                             45
-2     /fdsa                        105  1324                              38
-3     1324                          99  /fdsa                              0
-
---- Creatures After Battle ---
-Name                    Strength      Health
-1324                         176          38
-/fdsa                        141           0
-
-1324 defeated /fdsa in 3 rounds.
-
-===== Creature Battle Menu =====
-1. Battle
-2. Quit
-Enter your choice: 3
-Invalid choice. Please enter 1 or 2: `
-Invalid choice. Please enter 1 or 2: 0
-Invalid choice. Please enter 1 or 2: d
-Invalid choice. Please enter 1 or 2: fsa
-Invalid choice. Please enter 1 or 2: 2
-
-Are you sure you want to quit? (y/n): 3
-Invalid input. Please enter 'y' or 'n'.
-
-Are you sure you want to quit? (y/n): 4
-Invalid input. Please enter 'y' or 'n'.
-
-Are you sure you want to quit? (y/n): 2
+Are you sure you want to quit? (y/n): 1
 Invalid input. Please enter 'y' or 'n'.
 
 Are you sure you want to quit? (y/n): n
-
-===== Creature Battle Menu =====
-1. Battle
-2. Quit
-Enter your choice: 1
-
-Enter the name of the first creature: Aiden
-Enter the name of the second creature: Daniel
-
---- Creatures Before Battle ---
-Name                    Strength      Health
-Aiden                        188         145
-Daniel                       104         156
-
-Daniel attacks first!
-
---- Battle Log ---
-Round Attacker                  Damage  Defender             Defender Health
-1     Daniel                        80  Aiden                             65
-2     Aiden                        163  Daniel                             0
-
---- Creatures After Battle ---
-Name                    Strength      Health
-Aiden                        188          65
-Daniel                       104           0
-
-Aiden defeated Daniel in 2 rounds.
 
 ===== Creature Battle Menu =====
 1. Battle
